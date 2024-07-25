@@ -51,6 +51,44 @@ exports.register = async (req, res) => {
     }
 };
 
+exports.login = async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        // Verificar si el usuario existe
+        let user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ msg: 'Invalid Credentials' });
+        }
+
+        // Verificar la contraseña
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ msg: 'Invalid Credentials' });
+        }
+
+        // Crear y devolver JWT
+        const payload = {
+            user: {
+                id: user.id
+            }
+        };
+
+        jwt.sign(
+            payload,
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' },
+            (err, token) => {
+                if (err) throw err;
+                res.json({ token });
+            }
+        );
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+};
+
 exports.addPet = async (req, res) => {
     const { nombre, edad, raza } = req.body;
 
@@ -72,3 +110,4 @@ exports.addPet = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
+
