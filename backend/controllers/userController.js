@@ -1,8 +1,8 @@
-// controllers/userController.js
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+// Registro de usuario
 exports.register = async (req, res) => {
     const { name, apellido, email, telefono, password } = req.body;
 
@@ -10,12 +10,12 @@ exports.register = async (req, res) => {
         // Verificar si el usuario ya existe
         let user = await User.findOne({ email });
         if (user) {
-            return res.status(400).json({ msg: 'User already exists' });
+            return res.status(400).json({ msg: 'El usuario ya existe' });
         }
 
         // Crear nuevo usuario
         user = new User({
-            name,  // Usa `name` aquí
+            name,
             apellido,
             email,
             telefono,
@@ -46,11 +46,12 @@ exports.register = async (req, res) => {
             }
         );
     } catch (err) {
-        console.error('Error during registration:', err.message);
-        res.status(500).send('Server error');
+        console.error('Error durante el registro:', err.message);
+        res.status(500).send('Error del servidor');
     }
 };
 
+// Login de usuario
 exports.login = async (req, res) => {
     const { email, password } = req.body;
 
@@ -58,13 +59,13 @@ exports.login = async (req, res) => {
         // Verificar si el usuario existe
         let user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ msg: 'Invalid Credentials' });
+            return res.status(400).json({ msg: 'Credenciales inválidas' });
         }
 
         // Verificar la contraseña
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ msg: 'Invalid Credentials' });
+            return res.status(400).json({ msg: 'Credenciales inválidas' });
         }
 
         // Crear y devolver JWT
@@ -85,10 +86,11 @@ exports.login = async (req, res) => {
         );
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server error');
+        res.status(500).send('Error del servidor');
     }
 };
 
+// Agregar mascota al usuario
 exports.addPet = async (req, res) => {
     const { nombre, edad, raza } = req.body;
 
@@ -97,7 +99,7 @@ exports.addPet = async (req, res) => {
         const user = await User.findById(req.user.id);
 
         if (!user) {
-            return res.status(404).json({ msg: 'User not found' });
+            return res.status(404).json({ msg: 'Usuario no encontrado' });
         }
 
         // Agregar la mascota al usuario
@@ -106,8 +108,39 @@ exports.addPet = async (req, res) => {
 
         res.json(user.mascotas);
     } catch (err) {
-        console.error('Error adding pet:', err.message);
-        res.status(500).send('Server error');
+        console.error('Error al agregar la mascota:', err.message);
+        res.status(500).send('Error del servidor');
     }
 };
 
+// Agregar dispositivo a una mascota
+exports.addDeviceToPet = async (req, res) => {
+    const { nombreMascota, nombreDispositivo, tipo, modelo } = req.body;
+
+    try {
+        // Obtener el usuario autenticado
+        const user = await User.findById(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({ msg: 'Usuario no encontrado' });
+        }
+
+        // Encontrar la mascota por nombre
+        const pet = user.mascotas.find(p => p.nombre === nombreMascota);
+        if (!pet) {
+            return res.status(404).json({ msg: 'Mascota no encontrada' });
+        }
+
+        // Agregar el dispositivo a la mascota
+        if (!pet.dispositivos) {
+            pet.dispositivos = [];
+        }
+        pet.dispositivos.push({ nombre: nombreDispositivo, tipo, modelo });
+        await user.save();
+
+        res.json(pet);
+    } catch (err) {
+        console.error('Error al agregar el dispositivo:', err.message);
+        res.status(500).send('Error del servidor');
+    }
+};
