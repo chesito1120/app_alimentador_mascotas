@@ -145,3 +145,4 @@ exports.addDeviceAndAlarmsToPet = async (req, res) => {
         res.status(500).send('Error del servidor');
     }
 };
+

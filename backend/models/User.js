@@ -1,45 +1,27 @@
 const mongoose = require('mongoose');
 
-const DiaSchema = new mongoose.Schema({
+const DaySchema = new mongoose.Schema({
     hora: { type: String, required: true },
     gramaje: { type: Number, required: true },
     validar_comida: { type: Boolean, required: true }
 });
 
-const AlarmasSchema = new mongoose.Schema({
-    desayuno: {
-        dias: {
-            dia1: [DiaSchema],
-            dia2: [DiaSchema],
-            dia3: [DiaSchema],
-            dia4: [DiaSchema],
-            dia5: [DiaSchema],
-            dia6: [DiaSchema],
-            dia7: [DiaSchema]
-        }
-    },
-    comida: {
-        dias: {
-            dia1: [DiaSchema],
-            dia2: [DiaSchema],
-            dia3: [DiaSchema],
-            dia4: [DiaSchema],
-            dia5: [DiaSchema],
-            dia6: [DiaSchema],
-            dia7: [DiaSchema]
-        }
-    },
-    cena: {
-        dias: {
-            dia1: [DiaSchema],
-            dia2: [DiaSchema],
-            dia3: [DiaSchema],
-            dia4: [DiaSchema],
-            dia5: [DiaSchema],
-            dia6: [DiaSchema],
-            dia7: [DiaSchema]
-        }
+const MealSchema = new mongoose.Schema({
+    dias: {
+        dia1: [DaySchema],
+        dia2: [DaySchema],
+        dia3: [DaySchema],
+        dia4: [DaySchema],
+        dia5: [DaySchema],
+        dia6: [DaySchema],
+        dia7: [DaySchema]
     }
+});
+
+const AlarmSchema = new mongoose.Schema({
+    desayuno: MealSchema,
+    comida: MealSchema,
+    cena: MealSchema
 });
 
 const DeviceSchema = new mongoose.Schema({
@@ -48,14 +30,13 @@ const DeviceSchema = new mongoose.Schema({
     modelo: { type: String, required: true }
 });
 
+
 const PetSchema = new mongoose.Schema({
     nombre: { type: String, required: true },
     edad: { type: Number, required: true },
     raza: { type: String, required: true },
-    dispositivos: [DeviceSchema],
-    configuraciones: {
-        alarmas: AlarmasSchema
-    }
+    dispositivo: DeviceSchema,
+    alarmas: AlarmSchema
 });
 
 const UserSchema = new mongoose.Schema({
