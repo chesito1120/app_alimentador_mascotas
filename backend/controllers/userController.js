@@ -113,9 +113,9 @@ exports.addPet = async (req, res) => {
     }
 };
 
-// Agregar dispositivo a una mascota
-exports.addDeviceToPet = async (req, res) => {
-    const { nombreMascota, nombreDispositivo, tipo, modelo } = req.body;
+// Agregar dispositivo y alarmas a la mascota
+exports.addDeviceAndAlarmsToPet = async (req, res) => {
+    const { nombreMascota, dispositivo, alarmas } = req.body;
 
     try {
         // Obtener el usuario autenticado
@@ -132,15 +132,16 @@ exports.addDeviceToPet = async (req, res) => {
         }
 
         // Agregar el dispositivo a la mascota
-        if (!pet.dispositivos) {
-            pet.dispositivos = [];
-        }
-        pet.dispositivos.push({ nombre: nombreDispositivo, tipo, modelo });
+        pet.dispositivos.push(dispositivo);
+
+        // Agregar las alarmas a la mascota
+        pet.configuraciones.alarmas = alarmas;
+
         await user.save();
 
         res.json(pet);
     } catch (err) {
-        console.error('Error al agregar el dispositivo:', err.message);
+        console.error('Error al agregar dispositivo y alarmas:', err.message);
         res.status(500).send('Error del servidor');
     }
 };
