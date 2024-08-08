@@ -24,19 +24,22 @@ const AlarmSchema = new mongoose.Schema({
     cena: MealSchema
 });
 
+const ConfigSchema = new mongoose.Schema({
+    alarmas: AlarmSchema
+});
+
 const DeviceSchema = new mongoose.Schema({
     nombre: { type: String, required: true },
     tipo: { type: String, required: true },
-    modelo: { type: String, required: true }
+    modelo: { type: String, required: true },
+    configuraciones: ConfigSchema
 });
-
 
 const PetSchema = new mongoose.Schema({
     nombre: { type: String, required: true },
     edad: { type: Number, required: true },
     raza: { type: String, required: true },
-    dispositivo: DeviceSchema,
-    alarmas: AlarmSchema
+    dispositivo: DeviceSchema
 });
 
 const UserSchema = new mongoose.Schema({
