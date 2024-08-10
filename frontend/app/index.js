@@ -1,15 +1,32 @@
-// frontend/app/index.js
+import React, { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import LoginScreen from './src/screens/LoginScreen'; // Verifica la ruta correcta
+import SuccessScreen from './src/screens/SuccessScreen'; // Verifica la ruta correcta
+import AddPetScreen from './src/screens/AddPetScreen'; // Verifica la ruta correcta
 
-import { registerRootComponent } from 'expo';
-import { Tabs } from 'expo-router';
-import LoginScreen from '../src/screens/LoginScreen';
+const App = () => {
+  const [screen, setScreen] = useState('LoginScreen');
+  const [userName, setUserName] = useState('');
 
-export default function App() {
+  const handleLoginSuccess = (name) => {
+    setUserName(name);
+    setScreen('SuccessScreen');
+  };
+
   return (
-    <Tabs>
-      <Tabs.Screen name="index" component={LoginScreen} />
-    </Tabs>
+    <View style={styles.container}>
+      {screen === 'LoginScreen' && <LoginScreen setScreen={handleLoginSuccess} />}
+      {screen === 'SuccessScreen' && <SuccessScreen userName={userName} setScreen={setScreen} />}
+      {screen === 'AddPetScreen' && <AddPetScreen setScreen={setScreen} />}
+    </View>
   );
-}
+};
 
-registerRootComponent(App);
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F3F4F6',
+  },
+});
+
+export default App;
