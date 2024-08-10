@@ -1,33 +1,33 @@
 // src/screens/LoginScreen.js
 
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Image, StyleSheet } from 'react-native';
-import { login } from '../api/api'; // Asegúrate de que la ruta sea correcta
-import huellasGif from '../assets/images/huellas.gif';
+import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { loginUser } from '../api/api'; // Asegúrate de que esta ruta sea correcta
 
-const LoginScreen = ({ setScreen }) => {
+const LoginScreen = ({ setScreen, setToken }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
 
   const handleLogin = async () => {
     try {
-      const response = await login(email, password);
+      const response = await loginUser(email, password);
+      const data = await response.json();
+      
       if (response.ok) {
-        const { name } = await response.json();
-        setScreen(name); // Asumimos que el nombre del usuario se recibe aquí
+        // Almacena el token en el estado y navega a la pantalla de agregar mascota
+        setToken(data.token);
+        setScreen('AddPetScreen');
       } else {
-        setErrorMessage('Credenciales incorrectas');
+        Alert.alert('Error', data.msg || 'No se pudo iniciar sesión.');
       }
     } catch (error) {
-      setErrorMessage('No se pudo conectar al servidor');
+      console.error('Error al iniciar sesión:', error);
+      Alert.alert('Error', 'No se pudo iniciar sesión.');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Image source={huellasGif} style={styles.gif} />
-      <Text style={styles.title}>Iniciar sesión</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -36,19 +36,12 @@ const LoginScreen = ({ setScreen }) => {
       />
       <TextInput
         style={styles.input}
-        placeholder="Contraseña"
+        placeholder="Password"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
-      {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
-      <Button title="Iniciar sesión" onPress={handleLogin} />
-      <Text
-        style={styles.register}
-        onPress={() => setScreen('RegisterScreen')}
-      >
-        ¿No tienes cuenta? Regístrate
-      </Text>
+      <Button title="Login" onPress={handleLogin} />
     </View>
   );
 };
@@ -56,36 +49,16 @@ const LoginScreen = ({ setScreen }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#E6F7F0',
-  },
-  gif: {
-    width: 100,
-    height: 100,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-    color: '#4CAF50',
+    padding: 20,
+    backgroundColor: '#F3F4F6',
   },
   input: {
     height: 40,
-    borderColor: '#4CAF50',
-    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
     marginBottom: 20,
-    width: '80%',
     paddingHorizontal: 10,
-  },
-  error: {
-    color: 'red',
-    marginBottom: 20,
-  },
-  register: {
-    marginTop: 20,
-    color: '#4CAF50',
-    textDecorationLine: 'underline',
   },
 });
 

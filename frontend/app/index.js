@@ -1,8 +1,11 @@
+// app/index.js
+
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import LoginScreen from './src/screens/LoginScreen'; // Verifica la ruta correcta
-import SuccessScreen from './src/screens/SuccessScreen'; // Verifica la ruta correcta
-import AddPetScreen from './src/screens/AddPetScreen'; // Verifica la ruta correcta
+import { StatusBar } from 'expo-status-bar'; 
+import LoginScreen from './src/screens/LoginScreen';
+import SuccessScreen from './src/screens/SuccessScreen'; 
+import AddPetScreen from './src/screens/AddPetScreen'; 
 
 const App = () => {
   const [screen, setScreen] = useState('LoginScreen');
@@ -15,6 +18,7 @@ const App = () => {
 
   return (
     <View style={styles.container}>
+      <StatusBar style="dark" backgroundColor="#ffffff" /> {/* Configura la barra de estado */}
       {screen === 'LoginScreen' && <LoginScreen setScreen={handleLoginSuccess} />}
       {screen === 'SuccessScreen' && <SuccessScreen userName={userName} setScreen={setScreen} />}
       {screen === 'AddPetScreen' && <AddPetScreen setScreen={setScreen} />}
