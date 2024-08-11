@@ -57,23 +57,25 @@ exports.login = async (req, res) => {
 // Agregar mascota al usuario
 exports.addPet = async (req, res) => {
     const { nombre, edad, raza } = req.body;
+    const userId = req.user.id;
 
     try {
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ msg: 'Usuario no encontrado' });
         }
 
         user.mascotas.push({ nombre, edad, raza });
         await user.save();
-        res.json(user.mascotas);
+
+        res.json({ msg: 'Mascota añadida correctamente', mascotas: user.mascotas });
     } catch (err) {
-        console.error('Error al agregar la mascota:', err.message);
-        res.status(500).send('Error del servidor');
+        console.error('Error durante la adición de la mascota:', err.message);
+        res.status(500).json({ msg: 'Error en el servidor', error: err.message });
     }
 };
 
-// Agregar dispositivo y alarmas a la mascota
+
 exports.addDeviceAndAlarmsToPet = async (req, res) => {
     const { nombreMascota, dispositivo, alarmas } = req.body;
 
@@ -88,11 +90,9 @@ exports.addDeviceAndAlarmsToPet = async (req, res) => {
             return res.status(404).json({ msg: 'Mascota no encontrada' });
         }
 
-        // Establecer el dispositivo
+        // Establecer el dispositivo y las alarmas
         pet.dispositivo = dispositivo;
-
-        // Establecer las configuraciones del dispositivo, incluidas las alarmas
-        pet.dispositivo.configuraciones = { alarmas };
+        pet.alarmas = alarmas;
 
         await user.save();
         res.json(pet);
@@ -101,3 +101,4 @@ exports.addDeviceAndAlarmsToPet = async (req, res) => {
         res.status(500).send('Error del servidor');
     }
 };
+

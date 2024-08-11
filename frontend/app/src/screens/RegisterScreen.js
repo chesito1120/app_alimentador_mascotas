@@ -1,7 +1,8 @@
 // src/screens/RegisterScreen.js
 
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import { View, TextInput, Button, Text, StyleSheet, Pressable } from 'react-native';
+import Icon from 'react-native-vector-icons/Feather'; // Asegúrate de que esto esté instalado
 import { register } from '../api/api'; // Asegúrate de implementar esta función
 
 const RegisterScreen = ({ setScreen }) => {
@@ -28,39 +29,49 @@ const RegisterScreen = ({ setScreen }) => {
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Nombre"
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Apellido"
-        value={apellido}
-        onChangeText={setApellido}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Teléfono"
-        value={telefono}
-        onChangeText={setTelefono}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <Button title="Registrar" onPress={handleRegister} />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+      {/* Botón para regresar a la pantalla de inicio de sesión */}
+      <Pressable style={styles.backButton} onPress={() => setScreen('LoginScreen')}>
+        <Icon name="arrow-left" size={24} color="#000" />
+      </Pressable>
+      {/* Título de Registro */}
+      <Text style={styles.title}>Registro de Usuario</Text>
+      <View style={styles.formContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Nombre"
+          value={name}
+          onChangeText={setName}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Apellido"
+          value={apellido}
+          onChangeText={setApellido}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Teléfono"
+          value={telefono}
+          onChangeText={setTelefono}
+          keyboardType="phone-pad"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Contraseña"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+        <Button title="Registrar" onPress={handleRegister} />
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+      </View>
     </View>
   );
 };
@@ -68,8 +79,24 @@ const RegisterScreen = ({ setScreen }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     padding: 16,
+    backgroundColor: '#F3F4F6',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    padding: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginVertical: 20,
+  },
+  formContainer: {
+    flex: 1,
+    justifyContent: 'center',
   },
   input: {
     height: 40,

@@ -1,69 +1,59 @@
-// src/screens/AddPetScreen.js
-
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { addPet } from '../api/api'; // Asegúrate de que esta ruta sea correcta
+import { View, Text, TextInput, Button, StyleSheet, Pressable } from 'react-native';
+import Icon from 'react-native-vector-icons/Feather'; // Asegúrate de que esto esté instalado
+import { addPet } from '../api/api'; // Asegúrate de implementar esta función
 
-const AddPetScreen = ({ setScreen, token }) => {
+const AddPetScreen = ({ setScreen }) => {
   const [nombre, setNombre] = useState('');
   const [edad, setEdad] = useState('');
   const [raza, setRaza] = useState('');
+  const [error, setError] = useState('');
 
   const handleAddPet = async () => {
-    if (!nombre || !edad || !raza) {
-      Alert.alert('Error', 'Por favor completa todos los campos.');
-      return;
-    }
-
     try {
-      const pet = { nombre, edad: Number(edad), raza };
-
-      // Imprime el token en la consola para verificar
-      console.log('Token enviado:', token);
-
-      // Envía la solicitud al backend
-      const response = await addPet(token, pet);
-
-      // Imprime la respuesta completa para depuración
-      console.log('Respuesta del backend:', response);
-
+      const response = await addPet({ nombre, edad, raza });
       if (response.ok) {
-        Alert.alert('Éxito', 'Mascota agregada correctamente');
-        setScreen('SuccessScreen'); // O la pantalla que prefieras
+        setScreen('SuccessScreen'); // Redirige a la pantalla de éxito si la mascota se agrega correctamente
       } else {
-        // Muestra el mensaje de error del backend
-        const errorData = await response.json();
-        Alert.alert('Error', errorData.msg || 'No se pudo agregar la mascota.');
+        const result = await response.json();
+        setError(result.message || 'Error en la solicitud');
       }
     } catch (error) {
-      console.error('Error al agregar mascota:', error);
-      Alert.alert('Error', 'No se pudo agregar la mascota.');
+      setError('Error en la solicitud de agregar mascota');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Agregar Mascota</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nombre"
-        value={nombre}
-        onChangeText={setNombre}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Edad"
-        keyboardType="numeric"
-        value={edad}
-        onChangeText={setEdad}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Raza"
-        value={raza}
-        onChangeText={setRaza}
-      />
-      <Button title="Agregar Mascota" onPress={handleAddPet} />
+      {/* Botón para regresar a la pantalla anterior */}
+      <Pressable style={styles.backButton} onPress={() => setScreen('SuccessScreen')}>
+        <Icon name="arrow-left" size={24} color="#000" />
+      </Pressable>
+      {/* Título de Agregar Mascota */}
+      <Text style={styles.title}>Agregar Mascota</Text>
+      <View style={styles.formContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Nombre"
+          value={nombre}
+          onChangeText={setNombre}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Edad"
+          value={edad}
+          onChangeText={setEdad}
+          keyboardType="numeric"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Raza"
+          value={raza}
+          onChangeText={setRaza}
+        />
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        <Button title="Agregar" onPress={handleAddPet} />
+      </View>
     </View>
   );
 };
@@ -71,21 +61,38 @@ const AddPetScreen = ({ setScreen, token }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#F3F4F6',
+    padding: 20,
   },
-  header: {
+  title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    position: 'absolute',
+    top: 40,
+    right: 20,
   },
   input: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
+    backgroundColor: '#FFFFFF',
     borderRadius: 5,
-    marginBottom: 20,
-    paddingHorizontal: 10,
+    borderColor: '#DDDDDD',
+    borderWidth: 1,
+    marginBottom: 15,
+    padding: 10,
+  },
+  backButton: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    padding: 10,
+  },
+  formContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    marginTop: 80, // Ajusta si es necesario
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
   },
 });
 

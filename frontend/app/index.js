@@ -1,26 +1,20 @@
 // app/index.js
-
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { StatusBar } from 'expo-status-bar'; 
 import LoginScreen from './src/screens/LoginScreen';
-import SuccessScreen from './src/screens/SuccessScreen'; 
-import AddPetScreen from './src/screens/AddPetScreen'; 
+import SuccessScreen from './src/screens/SuccessScreen';
+import RegisterScreen from './src/screens/RegisterScreen';
+import AddPetScreen from './src/screens/AddPetScreen'; // Importa la nueva pantalla
 
 const App = () => {
   const [screen, setScreen] = useState('LoginScreen');
-  const [userName, setUserName] = useState('');
-
-  const handleLoginSuccess = (name) => {
-    setUserName(name);
-    setScreen('SuccessScreen');
-  };
 
   return (
     <View style={styles.container}>
-      <StatusBar style="dark" backgroundColor="#ffffff" /> {/* Configura la barra de estado */}
-      {screen === 'LoginScreen' && <LoginScreen setScreen={handleLoginSuccess} />}
-      {screen === 'SuccessScreen' && <SuccessScreen userName={userName} setScreen={setScreen} />}
+      {screen === 'LoginScreen' && <LoginScreen setScreen={setScreen} />}
+      {screen === 'SuccessScreen' && <SuccessScreen setScreen={setScreen} />}
+      {screen === 'RegisterScreen' && <RegisterScreen setScreen={setScreen} />}
       {screen === 'AddPetScreen' && <AddPetScreen setScreen={setScreen} />}
     </View>
   );

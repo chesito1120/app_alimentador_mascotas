@@ -1,14 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Importar el ícono
+import Icon from 'react-native-vector-icons/MaterialIcons'; // Asegúrate de que esta dependencia esté instalada
 
 const SuccessScreen = ({ userName, setScreen }) => {
   return (
     <View style={styles.container}>
+      {/* Botón para regresar a la pantalla de inicio de sesión */}
       <Pressable style={styles.backButton} onPress={() => setScreen('LoginScreen')}>
         <Icon name="arrow-back" size={24} color="#000" />
       </Pressable>
+      {/* Mensaje de bienvenida */}
       <Text style={styles.welcomeText}>¡Bienvenido {userName}!</Text>
+      {/* Botón para agregar una mascota */}
       <Pressable style={styles.addButton} onPress={() => setScreen('AddPetScreen')}>
         <Icon name="add" size={24} color="#fff" />
       </Pressable>
